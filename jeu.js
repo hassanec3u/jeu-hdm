@@ -1,4 +1,3 @@
-// Définition des dimensions de la fenêtre de jeu
 const LARGEUR_FENETRE = 300;
 const HAUTEUR_FENETRE = 480;
 
@@ -7,25 +6,38 @@ class Home extends Phaser.Scene {
         super("home");
         this.missile = null;
         this.cursors = null;
+        this.bullets = null;
+        this.bomb = null;
+        this.bulletSound = null;
+
     }
 
-    // Chargement des ressources avant le démarrage de la scène
     preload() {
         this.load.image("missile", "image/missile.png");
         this.load.image("bg", "image/background.png");
-        this.load.image("bullet", "image/bullet.png")
+        this.load.image("bullet", "image/bullet.png");
+        this.load.audio("bulletSound", "audio/shoot.wav");
+
+
     }
 
-    // Création des éléments de la scène
     create() {
-        this.add.image(0, 0, "bg")
+        this.add.image(0, 0, "bg");
+
         this.cursors = this.input.keyboard.createCursorKeys();
-        this.missile = this.physics.add.image(0, 0, "missile");
+        this.bullets = this.physics.add.group(); // Création d'un groupe de projectiles
+        this.missile = this.physics.add.image(140, 0, "missile");
+
         this.missile.setCollideWorldBounds(true);
+
+        // Chargement du son du tir de projectile
+        this.bulletSound = this.sound.add("bulletSound");
+        this.input.keyboard.on('keydown-SPACE', this.fireBullet, this); // Écouteur d'événement pour la touche Espace
+
     }
 
-    // Mise à jour de la logique du jeu à chaque frame
     update() {
+
         if (this.missile) {
             if (this.cursors.left.isDown) {
                 this.missile.setVelocityX(-200); // Déplacement du missile vers la gauche
@@ -34,8 +46,22 @@ class Home extends Phaser.Scene {
             } else {
                 this.missile.setVelocityX(0); // Arrêt du mouvement horizontal du missile
             }
+        }
 
+        // Suppression des projectiles sortis de la zone de jeu
+        this.bullets.getChildren().forEach((bullet) => {
+            if (bullet.y < 0) {
+                bullet.destroy();
+            }
+        });
 
+    }
+
+    fireBullet() {
+        if (this.missile) {
+            const bullet = this.bullets.create(this.missile.x, this.missile.y, 'bullet'); // Création d'un projectile à la position du missile
+            bullet.setVelocityY(-700); // Déplacement du projectile vers le haut
+            this.bulletSound.play();
         }
     }
 }
