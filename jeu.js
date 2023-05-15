@@ -43,6 +43,11 @@ class Home extends Phaser.Scene {
                 this.missile.setVelocityX(-200); // Déplacement du missile vers la gauche
             } else if (this.cursors.right.isDown) {
                 this.missile.setVelocityX(200); // Déplacement du missile vers la droite
+
+            } else if (this.cursors.up.isDown) {
+                this.missile.setVelocityY(-250)
+            } else if (this.cursors.down.isDown) {
+                this.missile.setVelocityY(250)
             } else {
                 this.missile.setVelocityX(0); // Arrêt du mouvement horizontal du missile
             }
