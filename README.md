@@ -1,43 +1,52 @@
-# space-battle
+# Space-Battle
 
-Ce projet est un jeu simple de tir de missile développé avec Phaser, un framework de jeu HTML5. Le joueur contrôle un missile et doit tirer des projectiles pour détruire des cibles. Le jeu comporte également des bombes qui descendent du haut de l'écran.
+Ce projet est un jeu développé en utilisant le framework Phaser. Il s'agit d'un jeu de tir dans lequel le joueur contrôle un vaisseau spatial et doit détruire les ennemis qui apparaissent à l'écran. Le score du joueur augmente chaque fois qu'il réussit à détruire un ennemi, et diminue lorsqu'il est touché par un ennemi.
 
-## Fonctionnalités du jeu
+## Caractéristiques
 
-- Déplacement horizontal du missile avec les touches gauche et droite du clavier.
-- Déplacement vertical du missile avec les touches haut et bas du clavier.
-- Tir de projectiles en appuyant sur la barre d'espace.
-- Destruction des projectiles qui sortent de la zone de jeu.
-- Réapparition des bombes en boucle.
-- Effet sonore lors du tir de projectile.
-
-## Configuration du jeu
-
-Le jeu est configuré avec les paramètres suivants :
-
-- Dimensions de la fenêtre de jeu : Largeur - 300px, Hauteur - 480px.
-- Moteur physique : Arcade.
-- Gravité : 450 (pour les bombes qui descendent).
-
-## Instructions de jeu
-
-- Utilisez les touches gauche et droite pour déplacer le missile horizontalement.
-- Utilisez les touches haut et bas pour déplacer le missile verticalement.
-- Appuyez sur la barre d'espace pour tirer des projectiles et détruire les cibles.
-- Évitez que les bombes ne touchent le missile, sinon le jeu se termine.
+- Taille de la fenêtre : 300 (largeur) x 480 (hauteur)
+- Vélocité latérale du vaisseau : 200
+- Vélocité horizontale du vaisseau : 250
+- Vélocité horizontale du projectile : 700
+- Score initial : 0
+- Nombre d'ennemis tués : 0
+- Vélocité des ennemis : 200
+- Intervalle d'apparition des ennemis : 2000 millisecondes
 
 ## Prérequis
 
-Avant de pouvoir exécuter le jeu, vous devez vous assurer d'avoir les éléments suivants :
+Avant de pouvoir exécuter ce projet, assurez-vous d'avoir les éléments suivants installés :
 
-- Un navigateur web compatible avec HTML5.
-- Un serveur web local ou un hébergement web pour exécuter le jeu.
+- [Phaser](https://phaser.io/) (version compatible avec Phaser 3)
 
 ## Installation
 
-Suivez les étapes ci-dessous pour installer et exécuter le jeu sur votre environnement local :
+1. Clonez ce dépôt de code sur votre machine locale.
+2. Assurez-vous d'avoir Phaser correctement installé.
+3. Ouvrez le fichier `index.html` dans un navigateur web.
 
-1. Clonez ou téléchargez ce dépôt sur votre machine.
-2. Assurez-vous d'avoir un serveur web local configuré ou utilisez un serveur web de votre choix.
-3. Placez les fichiers du jeu dans le répertoire racine de votre serveur web.
-4. Accédez au jeu via l'URL appropriée (par exemple, http://localhost/chemin-vers-le-jeu).
+## Contrôles
+
+- Utilisez les touches fléchées gauche et droite pour déplacer le vaisseau horizontalement.
+- Utilisez les touches fléchées haut et bas pour déplacer le vaisseau verticalement.
+- Appuyez sur la barre d'espace pour tirer des projectiles.
+- Appuyez sur la touche "P" pour mettre le jeu en pause.
+
+## Fonctionnalités
+
+- Affichage du score : Le score du joueur est affiché en haut à gauche de l'écran.
+- Gestion des collisions : Lorsqu'un projectile touche un ennemi, les deux sont détruits et le score est augmenté.
+- Gestion de la collision avec le vaisseau : Si le vaisseau est touché par un ennemi, le vaisseau est détruit, le score diminue (s'il est supérieur à zéro) et un effet sonore d'explosion est joué.
+- Mise en pause du jeu : En appuyant sur la touche "P", le jeu peut être mis en pause. Pendant la pause, la physique du jeu est suspendue, le minuteur d'apparition des ennemis est mis en pause et un message "Jeu en pause" est affiché à l'écran.
+
+## Crédits
+
+Ce projet a été développé par [votre nom]. Les ressources graphiques et sonores utilisées dans ce jeu sont fournies par [source des ressources].
+
+## Licence
+
+Ce projet est sous licence [indiquez la licence utilisée]. Veuillez consulter le fichier [NOM_DU_FICHIER_LICENCE] pour plus d'informations.
+
+---
+
+_Note : Assurez-vous de personnaliser ce README en fonction de votre projet, en ajoutant des sections supplémentaires ou en modifiant les sections existantes pour répondre aux besoins de votre projet._
