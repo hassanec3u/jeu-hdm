@@ -3,6 +3,8 @@ const HAUTEUR_FENETRE = 480;
 var VELOCITE_LATERAL_VAISSEAU = 200
 var VELOCITE_HORIZONTALE_VAISSEAU = 250
 var VELOCITE_HORIZONTALE_BULLET = 700
+var SCORE = 0
+var NB_ENNEMIES_TUEE = 0
 
 class Home extends Phaser.Scene {
     constructor() {
@@ -26,7 +28,7 @@ class Home extends Phaser.Scene {
 
     create() {
         this.add.image(0, 0, "bg");
-
+        this.scoreText = this.add.text(10, 10, 'Score:' + SCORE , { fontSize: '24px', fill: '#ffffff' }); //affichage du score        
         this.cursors = this.input.keyboard.createCursorKeys();
         this.bullets = this.physics.add.group(); // Création d'un groupe de projectiles
         this.vaisseau = this.physics.add.image(140, 0, "vaisseau");
@@ -41,7 +43,7 @@ class Home extends Phaser.Scene {
 
     update() {
         this.vaisseau.setVelocityX(0); // Arrêt du mouvement horizontal du vaisseau
-        this.vaisseau.setVelocityY(0); // Arrêt du mouvement horizontal du vaisseau
+        this.vaisseau.setVelocityY(0); // Arrêt du mouvement verticale du vaisseau
 
 
         if (this.vaisseau) {
@@ -51,6 +53,8 @@ class Home extends Phaser.Scene {
                 this.vaisseau.setVelocityX(VELOCITE_LATERAL_VAISSEAU); // Déplacement du vaisseau vers la droite
 
             } else if (this.cursors.up.isDown) {
+                SCORE ++
+                this.scoreText.setText('Score: ' + SCORE);
                 this.vaisseau.setVelocityY(-VELOCITE_HORIZONTALE_VAISSEAU)
             } else if (this.cursors.down.isDown) {
                 this.vaisseau.setVelocityY(VELOCITE_HORIZONTALE_VAISSEAU)
@@ -67,11 +71,9 @@ class Home extends Phaser.Scene {
     }
 
     fireBullet() {
-        if (this.vaisseau) {
             const bullet = this.bullets.create(this.vaisseau.x, this.vaisseau.y, 'bullet'); // Création d'un projectile à la position du vaisseau
             bullet.setVelocityY(-VELOCITE_HORIZONTALE_BULLET); // Déplacement du projectile vers le haut
             this.bulletSound.play();
-        }
     }
 }
 
