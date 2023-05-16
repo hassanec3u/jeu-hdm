@@ -109,7 +109,9 @@ class Home extends Phaser.Scene {
     enemyCollision(vaisseau, enemy) {
         enemy.destroy();
         this.explosionSound.play()
-        SCORE++;
+        if (SCORE > 0) {
+            SCORE -= 1;
+        }
         this.scoreText.setText('Score: ' + SCORE);
     }
 
