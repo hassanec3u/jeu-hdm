@@ -21,6 +21,8 @@ class Home extends Phaser.Scene {
         this.enemyTimer = null;
         this.enemies = null;
         this.scoreText = null;
+        this.isPaused = false;
+
     }
 
     preload() {
@@ -30,7 +32,25 @@ class Home extends Phaser.Scene {
         this.load.audio("bulletSound", "audio/shoot.wav");
         this.load.audio("explosionSound", "audio/explosion.wav");
         this.load.image("enemy", "image/enemy.png");
+
     }
+
+    togglePause() {
+        this.isPaused = !this.isPaused;
+
+        if (this.isPaused) {
+            this.physics.pause();
+            this.enemyTimer.paused = true;
+            this.pauseText.setVisible(true);
+        } else {
+            this.physics.resume();
+            this.enemyTimer.paused = false;
+            this.pauseText.setVisible(false);
+        }
+    }
+
+
+
 
     create() {
         this.add.image(0, 0, "bg");
@@ -46,9 +66,21 @@ class Home extends Phaser.Scene {
         this.startEnemyTimer();
 
         this.physics.add.overlap(this.vaisseau, this.enemies, this.enemyCollision, null, this);
+        this.input.keyboard.on('keydown-P', this.togglePause, this);
+        this.pauseText = this.add.text(
+            LARGEUR_FENETRE / 2,
+            HAUTEUR_FENETRE / 2,
+            'Jeu en pause', { fontSize: '32px', fill: '#ffffff' }
+        );
+        this.pauseText.setOrigin(0.5);
+        this.pauseText.setVisible(false);
+
     }
 
     update() {
+        if (this.isPaused) {
+            return;
+        }
         this.vaisseau.setVelocityX(0);
         this.vaisseau.setVelocityY(0);
 
@@ -74,6 +106,7 @@ class Home extends Phaser.Scene {
         this.physics.overlap(this.bullets, this.enemies, this.bulletEnemyCollision, null, this);
 
     }
+
 
 
 
