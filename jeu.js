@@ -1,10 +1,13 @@
 const LARGEUR_FENETRE = 300;
 const HAUTEUR_FENETRE = 480;
+var VELOCITE_LATERAL_VAISSEAU = 200
+var VELOCITE_HORIZONTALE_VAISSEAU = 250
+var VELOCITE_HORIZONTALE_BULLET = 700
 
 class Home extends Phaser.Scene {
     constructor() {
         super("home");
-        this.missile = null;
+        this.vaisseau = null;
         this.cursors = null;
         this.bullets = null;
         this.bomb = null;
@@ -13,7 +16,7 @@ class Home extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image("missile", "image/missile.png");
+        this.load.image("vaisseau", "image/vaisseau.png");
         this.load.image("bg", "image/background.png");
         this.load.image("bullet", "image/bullet.png");
         this.load.audio("bulletSound", "audio/shoot.wav");
@@ -26,9 +29,9 @@ class Home extends Phaser.Scene {
 
         this.cursors = this.input.keyboard.createCursorKeys();
         this.bullets = this.physics.add.group(); // Création d'un groupe de projectiles
-        this.missile = this.physics.add.image(140, 0, "missile");
+        this.vaisseau = this.physics.add.image(140, 0, "vaisseau");
 
-        this.missile.setCollideWorldBounds(true);
+        this.vaisseau.setCollideWorldBounds(true);
 
         // Chargement du son du tir de projectile
         this.bulletSound = this.sound.add("bulletSound");
@@ -37,20 +40,21 @@ class Home extends Phaser.Scene {
     }
 
     update() {
+        this.vaisseau.setVelocityX(0); // Arrêt du mouvement horizontal du vaisseau
+        this.vaisseau.setVelocityY(0); // Arrêt du mouvement horizontal du vaisseau
 
-        if (this.missile) {
+
+        if (this.vaisseau) {
             if (this.cursors.left.isDown) {
-                this.missile.setVelocityX(-200); // Déplacement du missile vers la gauche
+                this.vaisseau.setVelocityX(-VELOCITE_LATERAL_VAISSEAU); // Déplacement du vaisseau vers la gauche
             } else if (this.cursors.right.isDown) {
-                this.missile.setVelocityX(200); // Déplacement du missile vers la droite
+                this.vaisseau.setVelocityX(VELOCITE_LATERAL_VAISSEAU); // Déplacement du vaisseau vers la droite
 
             } else if (this.cursors.up.isDown) {
-                this.missile.setVelocityY(-250)
+                this.vaisseau.setVelocityY(-VELOCITE_HORIZONTALE_VAISSEAU)
             } else if (this.cursors.down.isDown) {
-                this.missile.setVelocityY(250)
-            } else {
-                this.missile.setVelocityX(0); // Arrêt du mouvement horizontal du missile
-            }
+                this.vaisseau.setVelocityY(VELOCITE_HORIZONTALE_VAISSEAU)
+            } 
         }
 
         // Suppression des projectiles sortis de la zone de jeu
@@ -63,9 +67,9 @@ class Home extends Phaser.Scene {
     }
 
     fireBullet() {
-        if (this.missile) {
-            const bullet = this.bullets.create(this.missile.x, this.missile.y, 'bullet'); // Création d'un projectile à la position du missile
-            bullet.setVelocityY(-700); // Déplacement du projectile vers le haut
+        if (this.vaisseau) {
+            const bullet = this.bullets.create(this.vaisseau.x, this.vaisseau.y, 'bullet'); // Création d'un projectile à la position du vaisseau
+            bullet.setVelocityY(-VELOCITE_HORIZONTALE_BULLET); // Déplacement du projectile vers le haut
             this.bulletSound.play();
         }
     }
@@ -79,7 +83,7 @@ const config = {
     physics: {
         default: "arcade",
         arcade: {
-            gravity: { y: 450 },
+            gravity: { y: 0 },
         }
     },
     scene: Home
