@@ -48,9 +48,7 @@ class Home extends Phaser.Scene {
         gameOverText.setOrigin(0.5);
         this.physics.pause(); // Met  jeu en pause
         this.enemyTimer.paused = true; // Met en pause les  ennemis
-        this.time.delayedCall(3000, () => {
-            this.scene.start("accueil");
-        });
+
     }
 
     togglePause() {
