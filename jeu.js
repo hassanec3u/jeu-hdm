@@ -1,3 +1,4 @@
+import Accueil from "./Acceuil.js"
 const LARGEUR_FENETRE = 300; // Définition de la largeur de la fenêtre du jeu
 const HAUTEUR_FENETRE = 480; // Définition de la hauteur de la fenêtre du jeu
 const VELOCITE_LATERAL_VAISSEAU = 200; // Définition de la vitesse latérale (horizontale) du vaisseau du joueur
@@ -25,7 +26,6 @@ class Home extends Phaser.Scene {
         this.scoreText = null; // Variable pour stocker le texte affichant le score du joueur
         this.vieText = null
         this.isPaused = false; // Variable pour indiquer si le jeu est en pause ou non
-
     }
 
     preload() {
@@ -36,7 +36,6 @@ class Home extends Phaser.Scene {
         this.load.audio("bulletSound", "audio/shoot.wav");
         this.load.audio("explosionSound", "audio/explosion.wav");
         this.load.image("enemy", "image/enemy.png");
-
     }
 
     // ===============================================================================================//
@@ -44,13 +43,14 @@ class Home extends Phaser.Scene {
         const gameOverText = this.add.text(
             this.cameras.main.width / 2,
             this.cameras.main.height / 2,
-            'Game Over',
-            {fontSize: '32px', fill: '#fff'}
+            'Game Over', { fontSize: '32px', fill: '#fff' }
         );
         gameOverText.setOrigin(0.5);
         this.physics.pause(); // Met  jeu en pause
         this.enemyTimer.paused = true; // Met en pause les  ennemis
-
+        this.time.delayedCall(3000, () => {
+            this.scene.start("accueil");
+        });
     }
 
     togglePause() {
@@ -73,10 +73,10 @@ class Home extends Phaser.Scene {
 
     create() {
         this.add.image(0, 0, "bg"); // Ajoute une image de fond
-        this.add.image(LARGEUR_FENETRE - 20,  30, "heart"); // Ajoute une image du nombre de vie restantes
+        this.add.image(LARGEUR_FENETRE - 20, 30, "heart"); // Ajoute une image du nombre de vie restantes
 
-        this.scoreText = this.add.text(10, 10, 'Score: ' + SCORE, {fontSize: '24px', fill: '#ffffff'}); // Ajoute un texte pour afficher le score
-        this.vieText = this.add.text(LARGEUR_FENETRE - 60 , 15 ,NB_VIE , {fontSize: '24px', fill: '#ffffff'})
+        this.scoreText = this.add.text(10, 10, 'Score: ' + SCORE, { fontSize: '24px', fill: '#ffffff' }); // Ajoute un texte pour afficher le score
+        this.vieText = this.add.text(LARGEUR_FENETRE - 60, 15, NB_VIE, { fontSize: '24px', fill: '#ffffff' })
         this.cursors = this.input.keyboard.createCursorKeys(); // Crée les touches du clavier pour le contrôle du vaisseau
         this.bullets = this.physics.add.group(); // Crée un groupe de projectiles
         this.vaisseau = this.physics.add.image(LARGEUR_FENETRE / 2, HAUTEUR_FENETRE, "vaisseau"); // Ajoute le vaisseau du joueur
@@ -92,7 +92,7 @@ class Home extends Phaser.Scene {
         this.pauseText = this.add.text(
             LARGEUR_FENETRE / 2,
             HAUTEUR_FENETRE / 2,
-            'Jeu en pause', {fontSize: '32px', fill: '#ffffff'}
+            'Jeu en pause', { fontSize: '32px', fill: '#ffffff' }
         ); // Ajoute un texte pour afficher l'état de pause du jeu
         this.pauseText.setOrigin(0.5); // Définit l'origine du texte de pause
         this.pauseText.setVisible(false); // Masque le texte de pause par défaut
@@ -103,8 +103,8 @@ class Home extends Phaser.Scene {
 
     update() {
 
-        if(NB_VIE>=0){
-            this.vieText.setText( NB_VIE ); // Met à jour le texte affichant le score
+        if (NB_VIE >= 0) {
+            this.vieText.setText(NB_VIE); // Met à jour le texte affichant le score
         }
         this.scoreText.setText('Score: ' + SCORE); // Met à jour le texte affichant le score
 
@@ -155,12 +155,12 @@ class Home extends Phaser.Scene {
 
 
     bulletEnemyCollision(bullet, enemy) {
-        SCORE++; // Incrémente le score
-        bullet.destroy(); // Supprime le projectile
-        enemy.destroy(); // Supprime l'ennemi
-       // this.scoreText.setText('Score: ' + SCORE); // Met à jour le texte affichant le score
-    }
-    // ===============================================================================================//
+            SCORE++; // Incrémente le score
+            bullet.destroy(); // Supprime le projectile
+            enemy.destroy(); // Supprime l'ennemi
+            // this.scoreText.setText('Score: ' + SCORE); // Met à jour le texte affichant le score
+        }
+        // ===============================================================================================//
 
     createEnemy() {
         const x = Phaser.Math.Between(0, LARGEUR_FENETRE); // Génère une position horizontale aléatoire pour l'ennemi
@@ -176,7 +176,7 @@ class Home extends Phaser.Scene {
         this.explosionSound.play(); // Joue le son d'explosion
 
         NB_VIE--; // Réduit le score d'1 point si le score est supérieur à 0
-        if(NB_VIE <0 ){
+        if (NB_VIE < 0) {
             gameOver = true
         }
     }
@@ -203,10 +203,10 @@ const config = {
     physics: {
         default: "arcade",
         arcade: {
-            gravity: {y: 0}
+            gravity: { y: 0 }
         }
     },
-    scene: Home
+    scene: [Accueil, Home]
 };
 // ===============================================================================================//
 
