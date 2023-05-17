@@ -30,6 +30,7 @@ class Home extends Phaser.Scene {
 
     preload() {
         this.load.image("vaisseau", "image/vaisseau.png");
+        this.load.image("heart", "image/heart.png");
         this.load.image("bg", "image/background.png");
         this.load.image("bullet", "image/bullet.png");
         this.load.audio("bulletSound", "audio/shoot.wav");
@@ -71,9 +72,11 @@ class Home extends Phaser.Scene {
 
 
     create() {
-        this.add.image(0, 0, "bg"); // Ajoute une image de fond à la scène
+        this.add.image(0, 0, "bg"); // Ajoute une image de fond
+        this.add.image(LARGEUR_FENETRE - 20,  30, "heart"); // Ajoute une image du nombre de vie restantes
+
         this.scoreText = this.add.text(10, 10, 'Score: ' + SCORE, {fontSize: '24px', fill: '#ffffff'}); // Ajoute un texte pour afficher le score
-        this.vieText = this.add.text(LARGEUR_FENETRE - 30 , 10 ,NB_VIE , {fontSize: '24px', fill: '#ffffff'})
+        this.vieText = this.add.text(LARGEUR_FENETRE - 60 , 15 ,NB_VIE , {fontSize: '24px', fill: '#ffffff'})
         this.cursors = this.input.keyboard.createCursorKeys(); // Crée les touches du clavier pour le contrôle du vaisseau
         this.bullets = this.physics.add.group(); // Crée un groupe de projectiles
         this.vaisseau = this.physics.add.image(LARGEUR_FENETRE / 2, HAUTEUR_FENETRE, "vaisseau"); // Ajoute le vaisseau du joueur
@@ -176,7 +179,6 @@ class Home extends Phaser.Scene {
         if(NB_VIE <0 ){
             gameOver = true
         }
-    //    this.scoreText.setText('Score: ' + SCORE); // Met à jour le texte affichant le score
     }
 
     // ===============================================================================================//
