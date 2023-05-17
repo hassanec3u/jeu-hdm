@@ -31,7 +31,7 @@ class Home extends Phaser.Scene {
     preload() {
         this.load.image("vaisseau", "image/vaisseau.png");
         this.load.image("heart", "image/heart.png");
-        this.load.image("bg", "image/background.png");
+        this.load.image("bg", "image/bgStars.png");
         this.load.image("bullet", "image/bullet.png");
         this.load.audio("bulletSound", "audio/shoot.wav");
         this.load.audio("explosionSound", "audio/explosion.wav");
