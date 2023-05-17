@@ -4,7 +4,7 @@ const HAUTEUR_FENETRE = 480; // Définition de la hauteur de la fenêtre du jeu
 const VELOCITE_LATERAL_VAISSEAU = 200; // Définition de la vitesse latérale (horizontale) du vaisseau du joueur
 const VELOCITE_HORIZONTALE_VAISSEAU = 250; // Définition de la vitesse horizontale du vaisseau du joueur
 const VELOCITE_HORIZONTALE_BULLET = 700; // Définition de la vitesse horizontale des projectiles tirés par le vaisseau
-var SCORE = 0; // Initialisation du score à 0
+var SCORE = localStorage.getItem("score"); // Initialisation du score à 0
 var NB_VIE = 3;
 var gameOver = false;
 let NB_ENNEMIES_TUEE = 0; // Initialisation du nombre d'ennemis tués à 0
@@ -26,6 +26,7 @@ class Home extends Phaser.Scene {
         this.scoreText = null; // Variable pour stocker le texte affichant le score du joueur
         this.vieText = null
         this.isPaused = false; // Variable pour indiquer si le jeu est en pause ou non
+
     }
 
     preload() {
@@ -48,6 +49,7 @@ class Home extends Phaser.Scene {
         gameOverText.setOrigin(0.5);
         this.physics.pause(); // Met  jeu en pause
         this.enemyTimer.paused = true; // Met en pause les  ennemis
+        localStorage.setItem('score', SCORE); // Enregistrer le score dans le localStorage
 
     }
 
@@ -73,8 +75,15 @@ class Home extends Phaser.Scene {
         this.add.image(0, 0, "bg"); // Ajoute une image de fond
         this.add.image(LARGEUR_FENETRE - 20, 30, "heart"); // Ajoute une image du nombre de vie restantes
 
-        this.scoreText = this.add.text(10, 10, 'Score: ' + SCORE, { fontSize: '24px', fill: '#ffffff' }); // Ajoute un texte pour afficher le score
-        this.vieText = this.add.text(LARGEUR_FENETRE - 60, 15, NB_VIE, { fontSize: '24px', fill: '#ffffff' })
+        const storedScore = localStorage.getItem('score');
+        if (storedScore !== null) {
+            this.score = parseInt(storedScore); // Récupérer le score depuis le localStorage
+        } else {
+            SCORE = 0; // Si aucun score n'est stocké, initialise le score à 0
+        }
+
+        this.scoreText = this.add.text(10, 10, 'Score: ' + this.score, { fontSize: '24px', fill: '#ffffff' }); // Utilise this.score pour afficher le score
+        this.vieText = this.add.text(LARGEUR_FENETRE - 60, 15, NB_VIE, { fontSize: '24px', fill: '#ffffff' });
         this.cursors = this.input.keyboard.createCursorKeys(); // Crée les touches du clavier pour le contrôle du vaisseau
         this.bullets = this.physics.add.group(); // Crée un groupe de projectiles
         this.vaisseau = this.physics.add.image(LARGEUR_FENETRE / 2, HAUTEUR_FENETRE, "vaisseau"); // Ajoute le vaisseau du joueur
@@ -95,6 +104,7 @@ class Home extends Phaser.Scene {
         this.pauseText.setOrigin(0.5); // Définit l'origine du texte de pause
         this.pauseText.setVisible(false); // Masque le texte de pause par défaut
     }
+
 
     // ===============================================================================================//
 
@@ -156,7 +166,6 @@ class Home extends Phaser.Scene {
             SCORE++; // Incrémente le score
             bullet.destroy(); // Supprime le projectile
             enemy.destroy(); // Supprime l'ennemi
-            // this.scoreText.setText('Score: ' + SCORE); // Met à jour le texte affichant le score
         }
         // ===============================================================================================//
 
@@ -176,6 +185,8 @@ class Home extends Phaser.Scene {
         NB_VIE--; // Réduit le score d'1 point si le score est supérieur à 0
         if (NB_VIE < 0) {
             gameOver = true
+            localStorage.setItem('score', SCORE); // Enregistrer le score dans le localStorage
+
         }
     }
 
