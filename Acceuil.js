@@ -1,5 +1,5 @@
-const LARGEUR_FENETRE = 300; // Définition de la largeur de la fenêtre du jeu
-const HAUTEUR_FENETRE = 480; // Définition de la hauteur de la fenêtre du jeu
+const LARGEUR_FENETRE = 750; // Définition de la largeur de la fenêtre du jeu
+const HAUTEUR_FENETRE = 600; // Définition de la hauteur de la fenêtre du jeu
 
 export default class Accueil extends Phaser.Scene {
     constructor() {

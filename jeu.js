@@ -1,10 +1,11 @@
 import Accueil from "./Acceuil.js"
-const LARGEUR_FENETRE = 300; // Définition de la largeur de la fenêtre du jeu
-const HAUTEUR_FENETRE = 480; // Définition de la hauteur de la fenêtre du jeu
-const VELOCITE_LATERAL_VAISSEAU = 200; // Définition de la vitesse latérale (horizontale) du vaisseau du joueur
+const LARGEUR_FENETRE = 750; // Définition de la largeur de la fenêtre du jeu
+const HAUTEUR_FENETRE = 600; // Définition de la hauteur de la fenêtre du jeu
+const VELOCITE_LATERAL_VAISSEAU = 300; // Définition de la vitesse latérale (horizontale) du vaisseau du joueur
 const VELOCITE_HORIZONTALE_VAISSEAU = 250; // Définition de la vitesse horizontale du vaisseau du joueur
 const VELOCITE_HORIZONTALE_BULLET = 700; // Définition de la vitesse horizontale des projectiles tirés par le vaisseau
-var SCORE = localStorage.getItem("score"); // Initialisation du score à 0
+var SCORE = 0; // Initialisation du score à 0
+var BEST_SCORE = localStorage.getItem("bestS"); // Initialisation du score à 0
 var NB_VIE = 3;
 var gameOver = false;
 let NB_ENNEMIES_TUEE = 0; // Initialisation du nombre d'ennemis tués à 0
@@ -24,7 +25,8 @@ class Home extends Phaser.Scene {
         this.enemyTimer = null; // Variable pour stocker le minuteur de création des ennemis
         this.enemies = null; // Variable pour stocker les ennemis présents dans la scène
         this.scoreText = null; // Variable pour stocker le texte affichant le score du joueur
-        this.vieText = null
+        this.best_scoreText = null; // Variable pour stocker le texte affichant le score du joueur
+        this.vieText = null // Variable pour stocker le nombre de vie
         this.isPaused = false; // Variable pour indiquer si le jeu est en pause ou non
 
     }
@@ -41,6 +43,12 @@ class Home extends Phaser.Scene {
 
     // ===============================================================================================//
     displayGameOver() {
+
+        // Enregistrer le meilleur score dans le localStorage
+        if(SCORE > BEST_SCORE){
+            localStorage.setItem('bestS', SCORE.toString()); // Enregistrer le score dans le localStorage
+        }
+
         const gameOverText = this.add.text(
             this.cameras.main.width / 2,
             this.cameras.main.height / 2,
@@ -49,7 +57,7 @@ class Home extends Phaser.Scene {
         gameOverText.setOrigin(0.5);
         this.physics.pause(); // Met  jeu en pause
         this.enemyTimer.paused = true; // Met en pause les  ennemis
-        localStorage.setItem('score', SCORE); // Enregistrer le score dans le localStorage
+
 
     }
 
@@ -75,14 +83,19 @@ class Home extends Phaser.Scene {
         this.add.image(0, 0, "bg"); // Ajoute une image de fond
         this.add.image(LARGEUR_FENETRE - 20, 30, "heart"); // Ajoute une image du nombre de vie restantes
 
-        const storedScore = localStorage.getItem('score');
-        if (storedScore !== null) {
-            this.score = parseInt(storedScore); // Récupérer le score depuis le localStorage
+        console.log(BEST_SCORE)
+
+
+        if (BEST_SCORE !== null) {
+            this.best_score = parseInt(BEST_SCORE);
         } else {
-            SCORE = 0; // Si aucun score n'est stocké, initialise le score à 0
+            BEST_SCORE = 0; // Si aucun score n'est stocké, initialise le score à 0
         }
 
-        this.scoreText = this.add.text(10, 10, 'Score: ' + this.score, { fontSize: '24px', fill: '#ffffff' }); // Utilise this.score pour afficher le score
+        this.best_scoreText = this.add.text(10, 40, 'Record: ' +BEST_SCORE , { fontSize: '24px', fill: '#ffffff' }) // Variable pour stocker le texte affichant le score du joueur
+
+
+        this.scoreText = this.add.text(10, 10, 'Score: ' +SCORE , { fontSize: '24px', fill: '#ffffff' }); // Utilise this.score pour afficher le score
         this.vieText = this.add.text(LARGEUR_FENETRE - 60, 15, NB_VIE, { fontSize: '24px', fill: '#ffffff' });
         this.cursors = this.input.keyboard.createCursorKeys(); // Crée les touches du clavier pour le contrôle du vaisseau
         this.bullets = this.physics.add.group(); // Crée un groupe de projectiles
@@ -115,6 +128,7 @@ class Home extends Phaser.Scene {
             this.vieText.setText(NB_VIE); // Met à jour le texte affichant le score
         }
         this.scoreText.setText('Score: ' + SCORE); // Met à jour le texte affichant le score
+      //  this.best_scoreText.setText('Record: ' + BEST_SCORE); // Met à jour le texte affichant le score
 
         if (this.isPaused) {
             return; // Si le jeu est en pause, on arrête l'exécution du reste du code dans cette fonction
