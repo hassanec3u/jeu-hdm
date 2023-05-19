@@ -4,9 +4,9 @@ const HAUTEUR_FENETRE = 600; // Définition de la hauteur de la fenêtre du jeu
 const VELOCITE_LATERAL_VAISSEAU = 300; // Définition de la vitesse latérale (horizontale) du vaisseau du joueur
 const VELOCITE_HORIZONTALE_VAISSEAU = 250; // Définition de la vitesse horizontale du vaisseau du joueur
 const VELOCITE_HORIZONTALE_BULLET = 700; // Définition de la vitesse horizontale des projectiles tirés par le vaisseau
-var SCORE  ; // Initialisation du score à 0
+var SCORE; // Initialisation du score à 0
 var BEST_SCORE; // Initialisation du score à 0
-var NB_VIE ;
+var NB_VIE;
 var gameOver = false;
 let NB_ENNEMIES_TUEE; // Initialisation du nombre d'ennemis tués à 0
 const VELOCITE_ENNEMI = 200; // Définition de la vitesse des ennemis
@@ -39,6 +39,11 @@ class Home extends Phaser.Scene {
         this.load.audio("bulletSound", "audio/shoot.wav");
         this.load.audio("explosionSound", "audio/explosion.wav");
         this.load.image("enemy", "image/enemy.png");
+        this.load.spritesheet("explosion", "image/explosion.png", {
+            frameWidth: 64,
+            frameHeight: 64,
+        });
+
     }
 
     // ===============================================================================================//
@@ -84,9 +89,9 @@ class Home extends Phaser.Scene {
 
     create() {
         NB_VIE = 3;
-        gameOver=false;
+        gameOver = false;
         SCORE = 0;
-      BEST_SCORE  = localStorage.getItem("bestS");
+        BEST_SCORE = localStorage.getItem("bestS");
 
         this.add.image(0, 0, "bg"); // Ajoute une image de fond
         this.add.image(LARGEUR_FENETRE - 20, 30, "heart"); // Ajoute une image du nombre de vie restantes
@@ -121,6 +126,14 @@ class Home extends Phaser.Scene {
         ); // Ajoute un texte pour afficher l'état de pause du jeu
         this.pauseText.setOrigin(0.5); // Définit l'origine du texte de pause
         this.pauseText.setVisible(false); // Masque le texte de pause par défaut
+        this.anims.create({
+            key: "explode",
+            frames: this.anims.generateFrameNumbers("explosion", { start: 0, end: 15 }),
+            frameRate: 24,
+            repeat: 0,
+            hideOnComplete: true,
+        });
+
     }
 
 
@@ -185,6 +198,9 @@ class Home extends Phaser.Scene {
             SCORE++; // Incrémente le score
             bullet.destroy(); // Supprime le projectile
             enemy.destroy(); // Supprime l'ennemi
+            const explosion = this.add.sprite(enemy.x, enemy.y, "explosion");
+            explosion.play("explode");
+
         }
         // ===============================================================================================//
 
