@@ -45,7 +45,7 @@ class Home extends Phaser.Scene {
     displayGameOver() {
 
         // Enregistrer le meilleur score dans le localStorage
-        if(SCORE > BEST_SCORE){
+        if (SCORE > BEST_SCORE) {
             localStorage.setItem('bestS', SCORE.toString()); // Enregistrer le score dans le localStorage
         }
 
@@ -58,6 +58,9 @@ class Home extends Phaser.Scene {
         this.physics.pause(); // Met  jeu en pause
         this.enemyTimer.paused = true; // Met en pause les  ennemis
 
+        this.time.delayedCall(3000, () => {
+            this.scene.start("accueil");
+        });
 
     }
 
@@ -92,10 +95,10 @@ class Home extends Phaser.Scene {
             BEST_SCORE = 0; // Si aucun score n'est stocké, initialise le score à 0
         }
 
-        this.best_scoreText = this.add.text(10, 40, 'Record: ' +BEST_SCORE , { fontSize: '24px', fill: '#ffffff' }) // Variable pour stocker le texte affichant le score du joueur
+        this.best_scoreText = this.add.text(10, 40, 'Record: ' + BEST_SCORE, { fontSize: '24px', fill: '#ffffff' }) // Variable pour stocker le texte affichant le score du joueur
 
 
-        this.scoreText = this.add.text(10, 10, 'Score: ' +SCORE , { fontSize: '24px', fill: '#ffffff' }); // Utilise this.score pour afficher le score
+        this.scoreText = this.add.text(10, 10, 'Score: ' + SCORE, { fontSize: '24px', fill: '#ffffff' }); // Utilise this.score pour afficher le score
         this.vieText = this.add.text(LARGEUR_FENETRE - 60, 15, NB_VIE, { fontSize: '24px', fill: '#ffffff' });
         this.cursors = this.input.keyboard.createCursorKeys(); // Crée les touches du clavier pour le contrôle du vaisseau
         this.bullets = this.physics.add.group(); // Crée un groupe de projectiles
@@ -128,7 +131,7 @@ class Home extends Phaser.Scene {
             this.vieText.setText(NB_VIE); // Met à jour le texte affichant le score
         }
         this.scoreText.setText('Score: ' + SCORE); // Met à jour le texte affichant le score
-      //  this.best_scoreText.setText('Record: ' + BEST_SCORE); // Met à jour le texte affichant le score
+        //  this.best_scoreText.setText('Record: ' + BEST_SCORE); // Met à jour le texte affichant le score
 
         if (this.isPaused) {
             return; // Si le jeu est en pause, on arrête l'exécution du reste du code dans cette fonction
