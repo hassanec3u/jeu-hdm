@@ -37,7 +37,7 @@ class Home extends Phaser.Scene {
         this.load.image("bg", "image/bgStars.png");
         this.load.image("bullet", "image/bullet.png");
         this.load.audio("bulletSound", "audio/shoot.wav");
-        this.load.audio("explosionSound", "audio/explosion.wav");
+        this.load.audio("explosionSound", "audio/expolosion1.wav");
         this.load.image("enemy", "image/enemy.png");
         this.load.spritesheet("explosion", "image/explosion.png", {
             frameWidth: 64,
@@ -200,7 +200,7 @@ class Home extends Phaser.Scene {
             enemy.destroy(); // Supprime l'ennemi
             const explosion = this.add.sprite(enemy.x, enemy.y, "explosion");
             explosion.play("explode");
-
+            this.explosionSound.play()
         }
         // ===============================================================================================//
 
