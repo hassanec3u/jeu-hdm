@@ -14,6 +14,8 @@ const INTERVALLE_ENNEMI = 2000; // Définition de l'intervalle de temps entre ch
 var coins;
 
 class Home extends Phaser.Scene {
+
+
     constructor() {
         super("home");
         this.vaisseau = null; // Variable pour stocker le vaisseau du joueur
@@ -29,17 +31,18 @@ class Home extends Phaser.Scene {
         this.vieText = null // Variable pour stocker le nombre de vie
         this.isPaused = false; // Variable pour indiquer si le jeu est en pause ou non
         this.coinsText = null;
+        this.bg = Phaser.GameObjects.tileSprite;
     }
 
     preload() {
         this.load.image("vaisseau", "image/vaisseau.png");
         this.load.image("heart", "image/heart.png");
-        this.load.image("bg", "image/bgStars.png");
+        this.load.image("bg", "image/bg1.png");
         this.load.image("bullet", "image/bullet.png");
         this.load.audio("bulletSound", "audio/shoot.wav");
         this.load.audio("explosionSound", "audio/expolosion1.wav");
         this.load.image("enemy", "image/enemy.png");
-        this.load.image("coins", "image/coins.png")
+        this.load.image("w", "image/coins.png")
             // Charge une feuille de sprites pour l'animation d'explosion à partir de l'image "explosion.png"
         this.load.spritesheet("explosion", "image/explosion.png", {
             frameWidth: 64,
@@ -96,7 +99,9 @@ class Home extends Phaser.Scene {
         SCORE = 0;
         BEST_SCORE = localStorage.getItem("bestS");
         coins = localStorage.getItem("coins")
+        const { width, height } = this.scale;
         this.add.image(0, 0, "bg"); // Ajoute une image de fond
+        this.bg = this.add.tileSprite(0, 0, width, height, "bg").setScale(2)
         this.add.image(LARGEUR_FENETRE - 20, 30, "heart"); // Ajoute une image du nombre de vie restantes
         this.add.image(LARGEUR_FENETRE - 20, 80, "coins")
         if (BEST_SCORE !== null) {
@@ -117,6 +122,7 @@ class Home extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys(); // Crée les touches du clavier pour le contrôle du vaisseau
         this.bullets = this.physics.add.group(); // Crée un groupe de projectiles
         this.vaisseau = this.physics.add.image(LARGEUR_FENETRE / 2, HAUTEUR_FENETRE, "vaisseau"); // Ajoute le vaisseau du joueur
+
         this.vaisseau.setCollideWorldBounds(true); // Définit les limites de collision du vaisseau avec le monde
         this.bulletSound = this.sound.add("bulletSound"); // Ajoute le son associé au tir du vaisseau
         this.explosionSound = this.sound.add("explosionSound"); // Ajoute le son associé à l'explosion des ennemis
@@ -148,7 +154,7 @@ class Home extends Phaser.Scene {
 
 
     update() {
-
+        this.bg.tilePositionY -= 3;
         if (NB_VIE >= 0) {
             this.vieText.setText(NB_VIE); // Met à jour le texte affichant le score
         }
@@ -187,6 +193,7 @@ class Home extends Phaser.Scene {
         });
 
         this.physics.overlap(this.bullets, this.enemies, this.bulletEnemyCollision, null, this); // Gère la collision entre les projectiles et les ennemis
+
     }
 
 
