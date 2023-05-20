@@ -39,6 +39,7 @@ class Home extends Phaser.Scene {
         this.load.audio("bulletSound", "audio/shoot.wav");
         this.load.audio("explosionSound", "audio/expolosion1.wav");
         this.load.image("enemy", "image/enemy.png");
+        // Charge une feuille de sprites pour l'animation d'explosion à partir de l'image "explosion.png"
         this.load.spritesheet("explosion", "image/explosion.png", {
             frameWidth: 64,
             frameHeight: 64,
@@ -53,7 +54,7 @@ class Home extends Phaser.Scene {
         if (SCORE > BEST_SCORE) {
             localStorage.setItem('bestS', SCORE.toString()); // Enregistrer le score dans le localStorage
         }
-
+        // Ajoute un texte "Game Over" à l'écran de jeu
         const gameOverText = this.add.text(
             this.cameras.main.width / 2,
             this.cameras.main.height / 2,
@@ -63,6 +64,7 @@ class Home extends Phaser.Scene {
         this.physics.pause(); // Met  jeu en pause
         this.enemyTimer.paused = true; // Met en pause les  ennemis
 
+        // Déclenche un retard de 3000 millisecondes avant d'exécuter la fonction de rappel
         this.time.delayedCall(3000, () => {
             this.scene.start("accueil");
         });
@@ -200,7 +202,7 @@ class Home extends Phaser.Scene {
             enemy.destroy(); // Supprime l'ennemi
             const explosion = this.add.sprite(enemy.x, enemy.y, "explosion");
             explosion.play("explode");
-            this.explosionSound.play()
+            this.explosionSound.play() // Joue le son d'explosion
         }
         // ===============================================================================================//
 
