@@ -11,7 +11,7 @@ var gameOver = false;
 let NB_ENNEMIES_TUEE; // Initialisation du nombre d'ennemis tués à 0
 const VELOCITE_ENNEMI = 200; // Définition de la vitesse des ennemis
 const INTERVALLE_ENNEMI = 2000; // Définition de l'intervalle de temps entre chaque création d'un nouvel ennemi
-
+var coins;
 
 class Home extends Phaser.Scene {
     constructor() {
@@ -28,7 +28,7 @@ class Home extends Phaser.Scene {
         this.best_scoreText = null; // Variable pour stocker le texte affichant le score du joueur
         this.vieText = null // Variable pour stocker le nombre de vie
         this.isPaused = false; // Variable pour indiquer si le jeu est en pause ou non
-
+        this.coinsText = null;
     }
 
     preload() {
@@ -39,7 +39,8 @@ class Home extends Phaser.Scene {
         this.load.audio("bulletSound", "audio/shoot.wav");
         this.load.audio("explosionSound", "audio/expolosion1.wav");
         this.load.image("enemy", "image/enemy.png");
-        // Charge une feuille de sprites pour l'animation d'explosion à partir de l'image "explosion.png"
+        this.load.image("coins", "image/coins.png")
+            // Charge une feuille de sprites pour l'animation d'explosion à partir de l'image "explosion.png"
         this.load.spritesheet("explosion", "image/explosion.png", {
             frameWidth: 64,
             frameHeight: 64,
@@ -94,21 +95,25 @@ class Home extends Phaser.Scene {
         gameOver = false;
         SCORE = 0;
         BEST_SCORE = localStorage.getItem("bestS");
-
+        coins = localStorage.getItem("coins")
         this.add.image(0, 0, "bg"); // Ajoute une image de fond
         this.add.image(LARGEUR_FENETRE - 20, 30, "heart"); // Ajoute une image du nombre de vie restantes
-
+        this.add.image(LARGEUR_FENETRE - 20, 80, "coins")
         if (BEST_SCORE !== null) {
             this.best_score = parseInt(BEST_SCORE);
         } else {
             BEST_SCORE = 0; // Si aucun score n'est stocké, initialise le score à 0
         }
 
+
+
+
         this.best_scoreText = this.add.text(10, 40, 'Record: ' + BEST_SCORE, { fontSize: '24px', fill: '#ffffff' }) // Variable pour stocker le texte affichant le score du joueur
 
 
         this.scoreText = this.add.text(10, 10, 'Score: ' + SCORE, { fontSize: '24px', fill: '#ffffff' }); // Utilise this.score pour afficher le score
         this.vieText = this.add.text(LARGEUR_FENETRE - 60, 15, NB_VIE, { fontSize: '24px', fill: '#ffffff' });
+        this.coinsText = this.add.text(LARGEUR_FENETRE - 70, 68, coins, { fontSize: '24px', fill: '#ffffff' });
         this.cursors = this.input.keyboard.createCursorKeys(); // Crée les touches du clavier pour le contrôle du vaisseau
         this.bullets = this.physics.add.group(); // Crée un groupe de projectiles
         this.vaisseau = this.physics.add.image(LARGEUR_FENETRE / 2, HAUTEUR_FENETRE, "vaisseau"); // Ajoute le vaisseau du joueur
@@ -149,6 +154,8 @@ class Home extends Phaser.Scene {
         }
         this.scoreText.setText('Score: ' + SCORE); // Met à jour le texte affichant le score
         //  this.best_scoreText.setText('Record: ' + BEST_SCORE); // Met à jour le texte affichant le score
+
+        this.coinsText.setText(coins); // Met à jour le texte affichant les coins
 
         if (this.isPaused) {
             return; // Si le jeu est en pause, on arrête l'exécution du reste du code dans cette fonction
@@ -198,6 +205,7 @@ class Home extends Phaser.Scene {
 
     bulletEnemyCollision(bullet, enemy) {
             SCORE++; // Incrémente le score
+            coins++;
             bullet.destroy(); // Supprime le projectile
             enemy.destroy(); // Supprime l'ennemi
             const explosion = this.add.sprite(enemy.x, enemy.y, "explosion");
@@ -223,6 +231,7 @@ class Home extends Phaser.Scene {
         if (NB_VIE < 0) {
             gameOver = true
             localStorage.setItem('score', SCORE); // Enregistrer le score dans le localStorage
+            localStorage.setItem('coins', coins); // Enregistrer le coins dans le localStorage
 
         }
     }
