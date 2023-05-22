@@ -7,16 +7,14 @@ const VELOCITE_HORIZONTALE_BULLET = 700; // Définition de la vitesse horizontal
 const VELOCITE_BOMB = 500
 const VELOCITE_ENNEMI = 200; // Définition de la vitesse des ennemis
 const INTERVALLE_ENNEMI = 2000; // Définition de l'intervalle de temps entre chaque création d'un nouvel ennemi
-const INTERVALLE_BOMB =  5000;
+const INTERVALLE_BOMB = 5000;
 
 let NB_ENNEMIES_TUEE; // Initialisation du nombre d'ennemis tués à 0
 var SCORE; // Initialisation du score à 0
 var BEST_SCORE; // Initialisation du score à 0
 var NB_VIE;
 var gameOver = false;
-
 var coins;
-
 class Home extends Phaser.Scene {
 
 
@@ -155,6 +153,7 @@ class Home extends Phaser.Scene {
             hideOnComplete: true,
         });
 
+
     }
 
 
@@ -201,6 +200,7 @@ class Home extends Phaser.Scene {
         });
 
         this.physics.overlap(this.bullets, this.enemies, this.bulletEnemyCollision, null, this); // Gère la collision entre les projectiles et les ennemis
+        this.physics.overlap(this.bullets, this.bombs, this.bulletBombCollision, null, this);
 
     }
 
@@ -216,6 +216,33 @@ class Home extends Phaser.Scene {
 
 
     // ===============================================================================================//
+
+
+    bulletBombCollision(bullet, bomb) {
+        bullet.destroy();
+        bomb.destroy();
+
+        const explosion = this.add.sprite(bomb.x, bomb.y, "explosion");
+        explosion.play("explode");
+        this.explosionSound.play();
+    }
+
+
+
+    bombVaisseauCollision(vaisseau, bomb) {
+        bomb.destroy(); // Supprime la bombe
+        const explosion = this.add.sprite(vaisseau.x, vaisseau.y, "explosion");
+        explosion.play("explode");
+        this.explosionSound.play(); // Joue le son d'explosion
+
+
+        gameOver = true;
+        localStorage.setItem('score', SCORE); // Enregistre le score dans le localStorage
+        localStorage.setItem('coins', coins); // Enregistre les coins dans le localStorage
+
+    }
+
+
 
 
     bulletEnemyCollision(bullet, enemy) {
@@ -241,6 +268,8 @@ class Home extends Phaser.Scene {
         const y = -10; // Position verticale de départ de la bombe (au-dessus de l'écran)
         const bomb = this.bombs.create(x, y, "bomb"); // Crée une bombe à la position générée
         bomb.setVelocityY(VELOCITE_BOMB); // Définit la vitesse verticale de la bombe
+        this.physics.add.overlap(this.vaisseau, bomb, this.bombVaisseauCollision, null, this); // Gère la collision entre le vaisseau et la bombe
+
     }
 
     // ===============================================================================================//
@@ -250,7 +279,7 @@ class Home extends Phaser.Scene {
         this.explosionSound.play(); // Joue le son d'explosion
 
         NB_VIE--; // Réduit le score d'1 point si le score est supérieur à 0
-        if (NB_VIE < 0) {
+        if (NB_VIE <= 0) {
             gameOver = true
             localStorage.setItem('score', SCORE); // Enregistrer le score dans le localStorage
             localStorage.setItem('coins', coins); // Enregistrer le coins dans le localStorage
