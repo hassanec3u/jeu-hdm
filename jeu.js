@@ -4,13 +4,17 @@ const HAUTEUR_FENETRE = 600; // Définition de la hauteur de la fenêtre du jeu
 const VELOCITE_LATERAL_VAISSEAU = 300; // Définition de la vitesse latérale (horizontale) du vaisseau du joueur
 const VELOCITE_HORIZONTALE_VAISSEAU = 250; // Définition de la vitesse horizontale du vaisseau du joueur
 const VELOCITE_HORIZONTALE_BULLET = 700; // Définition de la vitesse horizontale des projectiles tirés par le vaisseau
+const VELOCITE_BOMB = 500
+const VELOCITE_ENNEMI = 200; // Définition de la vitesse des ennemis
+const INTERVALLE_ENNEMI = 2000; // Définition de l'intervalle de temps entre chaque création d'un nouvel ennemi
+const INTERVALLE_BOMB =  5000;
+
+let NB_ENNEMIES_TUEE; // Initialisation du nombre d'ennemis tués à 0
 var SCORE; // Initialisation du score à 0
 var BEST_SCORE; // Initialisation du score à 0
 var NB_VIE;
 var gameOver = false;
-let NB_ENNEMIES_TUEE; // Initialisation du nombre d'ennemis tués à 0
-const VELOCITE_ENNEMI = 200; // Définition de la vitesse des ennemis
-const INTERVALLE_ENNEMI = 2000; // Définition de l'intervalle de temps entre chaque création d'un nouvel ennemi
+
 var coins;
 
 class Home extends Phaser.Scene {
@@ -26,6 +30,7 @@ class Home extends Phaser.Scene {
         this.explosionSound = null; // Variable pour stocker le son associé à l'explosion des ennemis
         this.enemyTimer = null; // Variable pour stocker le minuteur de création des ennemis
         this.enemies = null; // Variable pour stocker les ennemis présents dans la scène
+        this.bombs = null; // Variable pour stocker les bombes présents dans la scène
         this.scoreText = null; // Variable pour stocker le texte affichant le score du joueur
         this.best_scoreText = null; // Variable pour stocker le texte affichant le score du joueur
         this.vieText = null // Variable pour stocker le nombre de vie
@@ -35,6 +40,7 @@ class Home extends Phaser.Scene {
     }
 
     preload() {
+        this.load.image("bomb", "image/bomb.png");
         this.load.image("vaisseau", "image/vaisseau.png");
         this.load.image("heart", "image/heart.png");
         this.load.image("bg", "image/bg1.png");
@@ -77,7 +83,6 @@ class Home extends Phaser.Scene {
 
     togglePause() {
         this.isPaused = !this.isPaused; // Inverse la valeur de la variable isPaused
-
         if (this.isPaused) {
             this.physics.pause(); // Met  jeu en pause
             this.enemyTimer.paused = true; // Met en pause les  ennemis
@@ -104,6 +109,7 @@ class Home extends Phaser.Scene {
         this.bg = this.add.tileSprite(0, 0, width, height, "bg").setScale(2)
         this.add.image(LARGEUR_FENETRE - 20, 30, "heart"); // Ajoute une image du nombre de vie restantes
         this.add.image(LARGEUR_FENETRE - 20, 80, "coins")
+
         if (BEST_SCORE !== null) {
             this.best_score = parseInt(BEST_SCORE);
         } else {
@@ -128,7 +134,9 @@ class Home extends Phaser.Scene {
         this.explosionSound = this.sound.add("explosionSound"); // Ajoute le son associé à l'explosion des ennemis
         this.input.keyboard.on('keydown-SPACE', this.fireBullet, this); // Associe la touche d'espace à la fonction de tir des projectiles
         this.enemies = this.physics.add.group(); // Crée un groupe pour les ennemis
+        this.bombs = this.physics.add.group(); // Crée un groupe pour les bombs
         this.startEnemyTimer(); // Démarre le minuteur pour la création des ennemis
+        this.startBombTimer(); // Démarre le minuteur pour la création des ennemis
 
         this.physics.add.overlap(this.vaisseau, this.enemies, this.enemyCollision, null, this); // Gère la collision entre le vaisseau et les ennemis
         this.input.keyboard.on('keydown-P', this.togglePause, this); // Associe la touche P à la fonction de mise en pause/reprise du jeu
@@ -228,6 +236,13 @@ class Home extends Phaser.Scene {
         enemy.setVelocityY(VELOCITE_ENNEMI); // Définit la vitesse verticale de l'ennemi
     }
 
+    createBomb() {
+        const x = Phaser.Math.Between(0, LARGEUR_FENETRE); // Génère une position horizontale aléatoire pour l'ennemi
+        const y = -10; // Position verticale de départ de la bombe (au-dessus de l'écran)
+        const bomb = this.bombs.create(x, y, "bomb"); // Crée une bombe à la position générée
+        bomb.setVelocityY(VELOCITE_BOMB); // Définit la vitesse verticale de la bombe
+    }
+
     // ===============================================================================================//
 
     enemyCollision(vaisseau, enemy) {
@@ -249,6 +264,15 @@ class Home extends Phaser.Scene {
         this.enemyTimer = this.time.addEvent({
             delay: INTERVALLE_ENNEMI, // Délai entre chaque création d'ennemi
             callback: this.createEnemy, // Fonction de création de l'ennemi
+            callbackScope: this, // Portée du callback (cette scène)
+            loop: true // Indique que l'événement doit se répéter en boucle
+        });
+    }
+
+    startBombTimer() {
+        this.bombTimer = this.time.addEvent({
+            delay: INTERVALLE_BOMB, // Délai entre chaque création d'ennemi
+            callback: this.createBomb, // Fonction de création de l'ennemi
             callbackScope: this, // Portée du callback (cette scène)
             loop: true // Indique que l'événement doit se répéter en boucle
         });
