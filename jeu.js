@@ -323,15 +323,16 @@ class Home extends Phaser.Scene {
         if (this.hasPowerUp) {
             return;
         }
-        const power = ["speed"];
+        const power = ["speed", "coins"];
         const random = Phaser.Math.RND.pick(power);
         console.log(random);
         switch (random) {
             case "speed":
                 this.activateSpeed();
-
                 break;
-
+            case "coins":
+                this.AddCoins();
+                break;
             default:
                 break;
         }
@@ -350,7 +351,12 @@ class Home extends Phaser.Scene {
 
 
 
+    AddCoins() {
+        this.hasPowerUp = true;
+        coins += 20;
+        this.time.delayedCall(10000, () => { this.hasPowerUp = false })
 
+    }
 
 
 
