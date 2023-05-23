@@ -257,6 +257,7 @@ class Home extends Phaser.Scene {
         this.explosionSound.play();
     }
 
+    // ===============================================================================================//
 
     bombVaisseauCollision(vaisseau, bomb) {
         bomb.destroy(); // Supprime la bombe
@@ -271,18 +272,21 @@ class Home extends Phaser.Scene {
 
     }
 
+    // ===============================================================================================//
 
     bulletEnemyCollision(bullet, enemy) {
-        ENEMIES_DE_SUITE++;
+            ENEMIES_DE_SUITE++;
 
-        this.miseAjourScore()
-        coins++;
-        bullet.destroy(); // Supprime le projectile
-        enemy.destroy(); // Supprime l'ennemi
-        const explosion = this.add.sprite(enemy.x, enemy.y, "explosion");
-        explosion.play("explode");
-        this.explosionSound.play() // Joue le son d'explosion
-    }
+            this.miseAjourScore()
+            coins++;
+            bullet.destroy(); // Supprime le projectile
+            enemy.destroy(); // Supprime l'ennemi
+            const explosion = this.add.sprite(enemy.x, enemy.y, "explosion");
+            explosion.play("explode");
+            this.explosionSound.play() // Joue le son d'explosion
+        }
+        // ===============================================================================================//
+
 
     enemyCollision(vaisseau, enemy) {
         enemy.destroy(); // Supprime l'ennemi
@@ -300,6 +304,7 @@ class Home extends Phaser.Scene {
 
 
 
+    // ===============================================================================================//
 
 
     collectPowerUp(vaisseau, powerUp) {
@@ -308,6 +313,7 @@ class Home extends Phaser.Scene {
 
     }
 
+    // ===============================================================================================//
 
     createPowerUp() {
         if (!this.hasPowerUp) {
@@ -318,6 +324,9 @@ class Home extends Phaser.Scene {
         }
 
     }
+
+
+    // ===============================================================================================//
 
     activatePowerUp() {
         if (this.hasPowerUp) {
@@ -338,6 +347,8 @@ class Home extends Phaser.Scene {
         }
     }
 
+    // ===============================================================================================//
+
     activateSpeed() {
         VELOCITE_LATERAL_VAISSEAU *= 2;
         VELOCITE_HORIZONTALE_VAISSEAU *= 2;
@@ -350,6 +361,7 @@ class Home extends Phaser.Scene {
     }
 
 
+    // ===============================================================================================//
 
     AddCoins() {
         this.hasPowerUp = true;
@@ -359,6 +371,7 @@ class Home extends Phaser.Scene {
     }
 
 
+    // ===============================================================================================//
 
     resetSpeed() {
         this.hasPowerUp = false;
@@ -369,6 +382,7 @@ class Home extends Phaser.Scene {
 
 
 
+    // ===============================================================================================//
 
 
     startPowerUpTimer() {
@@ -381,6 +395,7 @@ class Home extends Phaser.Scene {
     }
 
 
+    // ===============================================================================================//
 
 
     miseAjourMulti() {
@@ -394,6 +409,8 @@ class Home extends Phaser.Scene {
             multiplicateur = 1
         }
     }
+
+    // ===============================================================================================//
 
     miseAjourScore() {
 
@@ -434,7 +451,6 @@ class Home extends Phaser.Scene {
 
 
 
-    // ===============================================================================================//
 
     startEnemyTimer() {
         this.enemyTimer = this.time.addEvent({
@@ -444,6 +460,9 @@ class Home extends Phaser.Scene {
             loop: true // Indique que l'événement doit se répéter en boucle
         });
     }
+
+    // ===============================================================================================//
+
 
     startBombTimer() {
         this.bombTimer = this.time.addEvent({
