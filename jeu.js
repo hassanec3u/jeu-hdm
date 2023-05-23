@@ -57,7 +57,7 @@ class Home extends Phaser.Scene {
         this.load.image("bullet", "image/bullet.png");
         this.load.audio("bulletSound", "audio/shoot.wav");
         this.load.audio("explosionSound", "audio/expolosion1.wav");
-        this.load.image("enemy", "image/enemy.png");
+        this.load.image("enemy", "image/ennemy1.png");
         this.load.image("coins", "image/coins.png");
         this.load.image("powerUp", "image/powerup.png");
         // Charge une feuille de sprites pour l'animation d'explosion à partir de l'image "explosion.png"
