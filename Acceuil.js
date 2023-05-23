@@ -52,6 +52,8 @@ export default class Accueil extends Phaser.Scene {
 
         boutonQuitter.on("pointerup", () => {
             this.game.destroy(true);
+            window.close();
+
         });
     }
 }
