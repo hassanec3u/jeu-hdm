@@ -120,7 +120,6 @@ class Home extends Phaser.Scene {
             BEST_SCORE = 0; // Si aucun score n'est stocké, initialise le score à 0
         }
 
-
         this.best_scoreText = this.add.text(10, 40, 'Record: ' + BEST_SCORE, {fontSize: '24px', fill: '#ffffff'}) // Variable pour stocker le texte affichant le score du joueur
         this.scoreText = this.add.text(10, 10, 'Score: ' + SCORE, {fontSize: '24px', fill: '#ffffff'}); // Utilise this.score pour afficher le score
         this.vieText = this.add.text(LARGEUR_FENETRE - 60, 15, NB_VIE, {fontSize: '24px', fill: '#ffffff'});
@@ -132,7 +131,6 @@ class Home extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys(); // Crée les touches du clavier pour le contrôle du vaisseau
         this.bullets = this.physics.add.group(); // Crée un groupe de projectiles
         this.vaisseau = this.physics.add.image(LARGEUR_FENETRE / 2, HAUTEUR_FENETRE, "vaisseau"); // Ajoute le vaisseau du joueur
-
         this.vaisseau.setCollideWorldBounds(true); // Définit les limites de collision du vaisseau avec le monde
         this.bulletSound = this.sound.add("bulletSound"); // Ajoute le son associé au tir du vaisseau
         this.explosionSound = this.sound.add("explosionSound"); // Ajoute le son associé à l'explosion des ennemis
@@ -158,8 +156,6 @@ class Home extends Phaser.Scene {
             repeat: 0,
             hideOnComplete: true,
         });
-
-
     }
 
 
@@ -255,6 +251,32 @@ class Home extends Phaser.Scene {
 
     }
 
+
+    bulletEnemyCollision(bullet, enemy) {
+        ENEMIES_DE_SUITE++;
+
+        this.miseAjourScore()
+        coins++;
+        bullet.destroy(); // Supprime le projectile
+        enemy.destroy(); // Supprime l'ennemi
+        const explosion = this.add.sprite(enemy.x, enemy.y, "explosion");
+        explosion.play("explode");
+        this.explosionSound.play() // Joue le son d'explosion
+    }
+
+    enemyCollision(vaisseau, enemy) {
+        enemy.destroy(); // Supprime l'ennemi
+        this.explosionSound.play(); // Joue le son d'explosion
+
+        NB_VIE--; // Réduit le score d'1 point si le score est supérieur à 0
+        ENEMIES_DE_SUITE = 1
+        if (NB_VIE <= 0) {
+            gameOver = true
+            localStorage.setItem('score', SCORE); // Enregistrer le score dans le localStorage
+            localStorage.setItem('coins', coins); // Enregistrer le coins dans le localStorage
+
+        }
+    }
     miseAjourMulti() {
         if (ENEMIES_DE_SUITE > 5) {
             if (ENEMIES_DE_SUITE > 10) {
@@ -283,17 +305,6 @@ class Home extends Phaser.Scene {
         }
     }
 
-    bulletEnemyCollision(bullet, enemy) {
-        ENEMIES_DE_SUITE++;
-
-        this.miseAjourScore()
-        coins++;
-        bullet.destroy(); // Supprime le projectile
-        enemy.destroy(); // Supprime l'ennemi
-        const explosion = this.add.sprite(enemy.x, enemy.y, "explosion");
-        explosion.play("explode");
-        this.explosionSound.play() // Joue le son d'explosion
-    }
 
     // ===============================================================================================//
 
@@ -315,18 +326,7 @@ class Home extends Phaser.Scene {
 
     // ===============================================================================================//
 
-    enemyCollision(vaisseau, enemy) {
-        enemy.destroy(); // Supprime l'ennemi
-        this.explosionSound.play(); // Joue le son d'explosion
 
-        NB_VIE--; // Réduit le score d'1 point si le score est supérieur à 0
-        if (NB_VIE <= 0) {
-            gameOver = true
-            localStorage.setItem('score', SCORE); // Enregistrer le score dans le localStorage
-            localStorage.setItem('coins', coins); // Enregistrer le coins dans le localStorage
-
-        }
-    }
 
     // ===============================================================================================//
 
