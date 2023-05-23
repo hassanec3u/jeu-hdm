@@ -1,4 +1,5 @@
 import Accueil from "./Acceuil.js"
+
 const LARGEUR_FENETRE = 750; // Définition de la largeur de la fenêtre du jeu
 const HAUTEUR_FENETRE = 600; // Définition de la hauteur de la fenêtre du jeu
 const VELOCITE_LATERAL_VAISSEAU = 300; // Définition de la vitesse latérale (horizontale) du vaisseau du joueur
@@ -9,12 +10,14 @@ const VELOCITE_ENNEMI = 200; // Définition de la vitesse des ennemis
 const INTERVALLE_ENNEMI = 2000; // Définition de l'intervalle de temps entre chaque création d'un nouvel ennemi
 const INTERVALLE_BOMB = 5000;
 
-let NB_ENNEMIES_TUEE; // Initialisation du nombre d'ennemis tués à 0
+var ENEMIES_DE_SUITE // vatiable qui permet de savoir combien d'ennemié d'affilé ont été tuée
 var SCORE; // Initialisation du score à 0
 var BEST_SCORE; // Initialisation du score à 0
 var NB_VIE;
 var gameOver = false;
 var coins;
+var multiplicateur;
+
 class Home extends Phaser.Scene {
 
 
@@ -32,6 +35,7 @@ class Home extends Phaser.Scene {
         this.scoreText = null; // Variable pour stocker le texte affichant le score du joueur
         this.best_scoreText = null; // Variable pour stocker le texte affichant le score du joueur
         this.vieText = null // Variable pour stocker le nombre de vie
+        this.comboText = null // Variable pour stocker le nombre de vie
         this.isPaused = false; // Variable pour indiquer si le jeu est en pause ou non
         this.coinsText = null;
         this.bg = Phaser.GameObjects.tileSprite;
@@ -47,7 +51,7 @@ class Home extends Phaser.Scene {
         this.load.audio("explosionSound", "audio/expolosion1.wav");
         this.load.image("enemy", "image/enemy.png");
         this.load.image("coins", "image/coins.png")
-            // Charge une feuille de sprites pour l'animation d'explosion à partir de l'image "explosion.png"
+        // Charge une feuille de sprites pour l'animation d'explosion à partir de l'image "explosion.png"
         this.load.spritesheet("explosion", "image/explosion.png", {
             frameWidth: 64,
             frameHeight: 64,
@@ -66,7 +70,7 @@ class Home extends Phaser.Scene {
         const gameOverText = this.add.text(
             this.cameras.main.width / 2,
             this.cameras.main.height / 2,
-            'Game Over', { fontSize: '32px', fill: '#fff' }
+            'Game Over', {fontSize: '32px', fill: '#fff'}
         );
         gameOverText.setOrigin(0.5);
         this.physics.pause(); // Met  jeu en pause
@@ -97,12 +101,14 @@ class Home extends Phaser.Scene {
 
 
     create() {
+        multiplicateur = 1;
+        ENEMIES_DE_SUITE = 0;
         NB_VIE = 3;
         gameOver = false;
         SCORE = 0;
         BEST_SCORE = localStorage.getItem("bestS");
         coins = localStorage.getItem("coins")
-        const { width, height } = this.scale;
+        const {width, height} = this.scale;
         this.add.image(0, 0, "bg"); // Ajoute une image de fond
         this.bg = this.add.tileSprite(0, 0, width, height, "bg").setScale(2)
         this.add.image(LARGEUR_FENETRE - 20, 30, "heart"); // Ajoute une image du nombre de vie restantes
@@ -115,14 +121,14 @@ class Home extends Phaser.Scene {
         }
 
 
-
-
-        this.best_scoreText = this.add.text(10, 40, 'Record: ' + BEST_SCORE, { fontSize: '24px', fill: '#ffffff' }) // Variable pour stocker le texte affichant le score du joueur
-
-
-        this.scoreText = this.add.text(10, 10, 'Score: ' + SCORE, { fontSize: '24px', fill: '#ffffff' }); // Utilise this.score pour afficher le score
-        this.vieText = this.add.text(LARGEUR_FENETRE - 60, 15, NB_VIE, { fontSize: '24px', fill: '#ffffff' });
-        this.coinsText = this.add.text(LARGEUR_FENETRE - 70, 68, coins, { fontSize: '24px', fill: '#ffffff' });
+        this.best_scoreText = this.add.text(10, 40, 'Record: ' + BEST_SCORE, {fontSize: '24px', fill: '#ffffff'}) // Variable pour stocker le texte affichant le score du joueur
+        this.scoreText = this.add.text(10, 10, 'Score: ' + SCORE, {fontSize: '24px', fill: '#ffffff'}); // Utilise this.score pour afficher le score
+        this.vieText = this.add.text(LARGEUR_FENETRE - 60, 15, NB_VIE, {fontSize: '24px', fill: '#ffffff'});
+        this.comboText = this.add.text(LARGEUR_FENETRE / 2 - 50, 15, "Combo :x" + multiplicateur, {
+            fontSize: '24px',
+            fill: '#ffffff'
+        })
+        this.coinsText = this.add.text(LARGEUR_FENETRE - 70, 68, coins, {fontSize: '24px', fill: '#ffffff'});
         this.cursors = this.input.keyboard.createCursorKeys(); // Crée les touches du clavier pour le contrôle du vaisseau
         this.bullets = this.physics.add.group(); // Crée un groupe de projectiles
         this.vaisseau = this.physics.add.image(LARGEUR_FENETRE / 2, HAUTEUR_FENETRE, "vaisseau"); // Ajoute le vaisseau du joueur
@@ -141,13 +147,13 @@ class Home extends Phaser.Scene {
         this.pauseText = this.add.text(
             LARGEUR_FENETRE / 2,
             HAUTEUR_FENETRE / 2,
-            'Jeu en pause', { fontSize: '32px', fill: '#ffffff' }
+            'Jeu en pause', {fontSize: '32px', fill: '#ffffff'}
         ); // Ajoute un texte pour afficher l'état de pause du jeu
         this.pauseText.setOrigin(0.5); // Définit l'origine du texte de pause
         this.pauseText.setVisible(false); // Masque le texte de pause par défaut
         this.anims.create({
             key: "explode",
-            frames: this.anims.generateFrameNumbers("explosion", { start: 0, end: 15 }),
+            frames: this.anims.generateFrameNumbers("explosion", {start: 0, end: 15}),
             frameRate: 24,
             repeat: 0,
             hideOnComplete: true,
@@ -166,8 +172,8 @@ class Home extends Phaser.Scene {
             this.vieText.setText(NB_VIE); // Met à jour le texte affichant le score
         }
         this.scoreText.setText('Score: ' + SCORE); // Met à jour le texte affichant le score
-        //  this.best_scoreText.setText('Record: ' + BEST_SCORE); // Met à jour le texte affichant le score
-
+        this.miseAjourMulti()
+        this.comboText.setText("Combo x" + multiplicateur)
         this.coinsText.setText(coins); // Met à jour le texte affichant les coins
 
         if (this.isPaused) {
@@ -199,6 +205,14 @@ class Home extends Phaser.Scene {
             }
         });
 
+        //renitilise le multiplicateur quand un enemie sort de le fenetre de jeu sans etre tuée
+        this.enemies.getChildren().forEach((enemie) => {
+            if (enemie.y > HAUTEUR_FENETRE) {
+                ENEMIES_DE_SUITE = 0
+                enemie.destroy()
+            }
+        })
+
         this.physics.overlap(this.bullets, this.enemies, this.bulletEnemyCollision, null, this); // Gère la collision entre les projectiles et les ennemis
         this.physics.overlap(this.bullets, this.bombs, this.bulletBombCollision, null, this);
 
@@ -228,7 +242,6 @@ class Home extends Phaser.Scene {
     }
 
 
-
     bombVaisseauCollision(vaisseau, bomb) {
         bomb.destroy(); // Supprime la bombe
         const explosion = this.add.sprite(vaisseau.x, vaisseau.y, "explosion");
@@ -242,19 +255,47 @@ class Home extends Phaser.Scene {
 
     }
 
+    miseAjourMulti() {
+        if (ENEMIES_DE_SUITE > 5) {
+            if (ENEMIES_DE_SUITE > 10) {
+                multiplicateur = 3
+            } else {
+                multiplicateur = 2
+            }
+        } else {
+            multiplicateur = 1
+        }
+    }
 
+    miseAjourScore() {
 
+        this.miseAjourMulti()
+        switch (multiplicateur) {
+            case 1:
+                SCORE++
+                break;
+            case 2:
+                SCORE += 2;
+                break;
+            case 3:
+                SCORE += 3;
+                break;
+        }
+    }
 
     bulletEnemyCollision(bullet, enemy) {
-            SCORE++; // Incrémente le score
-            coins++;
-            bullet.destroy(); // Supprime le projectile
-            enemy.destroy(); // Supprime l'ennemi
-            const explosion = this.add.sprite(enemy.x, enemy.y, "explosion");
-            explosion.play("explode");
-            this.explosionSound.play() // Joue le son d'explosion
-        }
-        // ===============================================================================================//
+        ENEMIES_DE_SUITE++;
+
+        this.miseAjourScore()
+        coins++;
+        bullet.destroy(); // Supprime le projectile
+        enemy.destroy(); // Supprime l'ennemi
+        const explosion = this.add.sprite(enemy.x, enemy.y, "explosion");
+        explosion.play("explode");
+        this.explosionSound.play() // Joue le son d'explosion
+    }
+
+    // ===============================================================================================//
 
     createEnemy() {
         const x = Phaser.Math.Between(0, LARGEUR_FENETRE); // Génère une position horizontale aléatoire pour l'ennemi
@@ -318,7 +359,7 @@ const config = {
     physics: {
         default: "arcade",
         arcade: {
-            gravity: { y: 0 }
+            gravity: {y: 0}
         }
     },
     scene: [Accueil, Home]
