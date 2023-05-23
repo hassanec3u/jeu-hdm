@@ -66,6 +66,11 @@ class Home extends Phaser.Scene {
             frameHeight: 64,
         });
 
+        this.load.spritesheet("health", "image/HealthPickup.png", {
+            frameWidth: 64,
+            frameHeight: 64,
+        })
+
     }
 
     // ===============================================================================================//
@@ -280,6 +285,7 @@ class Home extends Phaser.Scene {
         // Définit des propriétés supplémentaires du projectile ennemi si nécessaire
     }
 
+    // ===============================================================================================//
 
 
     enemyBulletCollision(vaisseau, bullet) {
@@ -297,6 +303,7 @@ class Home extends Phaser.Scene {
     }
 
 
+    // ===============================================================================================//
 
     bombVaisseauCollision(vaisseau, bomb) {
         bomb.destroy(); // Supprime la bombe
@@ -371,7 +378,7 @@ class Home extends Phaser.Scene {
         if (this.hasPowerUp) {
             return;
         }
-        const power = ["speed", "coins"];
+        const power = ["speed", "coins", "vie"];
         const random = Phaser.Math.RND.pick(power);
         console.log(random);
         switch (random) {
@@ -381,6 +388,8 @@ class Home extends Phaser.Scene {
             case "coins":
                 this.AddCoins();
                 break;
+            case "vie":
+                this.AddHealth()
             default:
                 break;
         }
@@ -408,6 +417,18 @@ class Home extends Phaser.Scene {
         this.time.delayedCall(10000, () => { this.hasPowerUp = false })
 
     }
+
+    // ===============================================================================================//
+
+
+    AddHealth() {
+        this.hasPowerUp = true;
+        NB_VIE += 2;
+        this.time.delayedCall(10000, () => { this.hasPowerUp = false });
+    }
+
+
+
 
 
     // ===============================================================================================//
@@ -478,6 +499,8 @@ class Home extends Phaser.Scene {
         this.enemyFireBullet(enemy);
 
     }
+
+    // ===============================================================================================//
 
     createBomb() {
         const x = Phaser.Math.Between(0, LARGEUR_FENETRE); // Génère une position horizontale aléatoire pour l'ennemi
