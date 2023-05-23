@@ -66,10 +66,7 @@ class Home extends Phaser.Scene {
             frameHeight: 64,
         });
 
-        this.load.spritesheet("health", "image/HealthPickup.png", {
-            frameWidth: 64,
-            frameHeight: 64,
-        })
+
 
     }
 
