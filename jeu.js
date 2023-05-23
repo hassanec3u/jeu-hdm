@@ -142,6 +142,8 @@ class Home extends Phaser.Scene {
         this.coinsText = this.add.text(LARGEUR_FENETRE - 70, 68, coins, { fontSize: '24px', fill: '#ffffff' });
         this.cursors = this.input.keyboard.createCursorKeys(); // Crée les touches du clavier pour le contrôle du vaisseau
         this.bullets = this.physics.add.group(); // Crée un groupe de projectiles
+        this.enemyBullets = this.physics.add.group(); // Group for storing enemy bullets
+
         this.vaisseau = this.physics.add.image(LARGEUR_FENETRE / 2, HAUTEUR_FENETRE, "vaisseau"); // Ajoute le vaisseau du joueur
         this.vaisseau.setCollideWorldBounds(true); // Définit les limites de collision du vaisseau avec le monde
         this.bulletSound = this.sound.add("bulletSound"); // Ajoute le son associé au tir du vaisseau
@@ -227,6 +229,8 @@ class Home extends Phaser.Scene {
         this.physics.overlap(this.bullets, this.enemies, this.bulletEnemyCollision, null, this); // Gère la collision entre les projectiles et les ennemis
         this.physics.overlap(this.bullets, this.bombs, this.bulletBombCollision, null, this);
         this.physics.overlap(this.vaisseau, this.PowerUp, this.collectPowerUp, null, this);
+        this.physics.overlap(this.vaisseau, this.enemyBullets, this.enemyBulletCollision, null, this);
+
         console.log(this.hasPowerUp);
         if (this.hasPowerUp) {
             this.activatePowerUp();
@@ -258,6 +262,41 @@ class Home extends Phaser.Scene {
     }
 
     // ===============================================================================================//
+
+
+
+
+    enemyFireBullet(enemy) {
+        const bullet = this.enemyBullets.create(enemy.x, enemy.y, 'bullet'); // Crée un projectile ennemi à la position de l'ennemi
+
+        // Calcule la direction entre l'ennemi et le vaisseau spatial
+        const angle = Phaser.Math.Angle.Between(enemy.x, enemy.y, this.vaisseau.x, this.vaisseau.y);
+
+        // Définit la vitesse du projectile en fonction de la direction
+        const velocityX = Math.cos(angle) * VELOCITE_HORIZONTALE_BULLET;
+        const velocityY = Math.sin(angle) * VELOCITE_HORIZONTALE_BULLET;
+        bullet.setVelocity(velocityX, velocityY);
+
+        // Définit des propriétés supplémentaires du projectile ennemi si nécessaire
+    }
+
+
+
+    enemyBulletCollision(vaisseau, bullet) {
+        bullet.destroy(); // Détruit le projectile ennemi
+        const explosion = this.add.sprite(vaisseau.x, vaisseau.y, "explosion"); // Ajoute une explosion à la position du vaisseau
+        explosion.play("explode"); // Joue l'animation d'explosion
+        this.explosionSound.play(); // Joue le son d'explosion
+
+        NB_VIE--; // Diminue le nombre de vies de 1
+        if (NB_VIE <= 0) {
+            gameOver = true;
+            localStorage.setItem('score', SCORE); // Enregistre le score dans le localStorage
+            localStorage.setItem('coins', coins); // Enregistre les coins dans le localStorage
+        }
+    }
+
+
 
     bombVaisseauCollision(vaisseau, bomb) {
         bomb.destroy(); // Supprime la bombe
@@ -436,6 +475,8 @@ class Home extends Phaser.Scene {
         const y = -10; // Position verticale de départ de l'ennemi (au-dessus de l'écran)
         const enemy = this.enemies.create(x, y, "enemy"); // Crée un ennemi à la position générée
         enemy.setVelocityY(VELOCITE_ENNEMI); // Définit la vitesse verticale de l'ennemi
+        this.enemyFireBullet(enemy);
+
     }
 
     createBomb() {
