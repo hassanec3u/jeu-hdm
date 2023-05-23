@@ -75,6 +75,7 @@ class Home extends Phaser.Scene {
         if (SCORE > BEST_SCORE) {
             localStorage.setItem('bestS', SCORE.toString()); // Enregistrer le score dans le localStorage
         }
+
         // Ajoute un texte "Game Over" à l'écran de jeu
         const gameOverText = this.add.text(
             this.cameras.main.width / 2,
@@ -90,6 +91,7 @@ class Home extends Phaser.Scene {
             this.scene.start("accueil");
         });
 
+        this.hasPowerUp = false;
     }
 
     togglePause() {
@@ -342,7 +344,6 @@ class Home extends Phaser.Scene {
         this.hasPowerUp = true;
 
         this.time.delayedCall(10000, () => {
-            this.hasPowerUp = false;
             this.resetSpeed();
         });
     }
