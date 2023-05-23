@@ -298,6 +298,25 @@ class Home extends Phaser.Scene {
 
 
 
+
+
+    collectPowerUp(vaisseau, powerUp) {
+        powerUp.destroy();
+        this.activatePowerUp()
+
+    }
+
+
+    createPowerUp() {
+        if (!this.hasPowerUp) {
+            const x = Phaser.Math.Between(0, LARGEUR_FENETRE);
+            const y = -10;
+            const powerUp = this.PowerUp.create(x, y, "powerUp");
+            powerUp.setVelocityY(VELOCITE_BOMB);
+        }
+
+    }
+
     activatePowerUp() {
         if (this.hasPowerUp) {
             return;
@@ -308,6 +327,7 @@ class Home extends Phaser.Scene {
         switch (random) {
             case "speed":
                 this.activateSpeed();
+
                 break;
 
             default:
@@ -315,31 +335,15 @@ class Home extends Phaser.Scene {
         }
     }
 
-    collectPowerUp(vaisseau, powerUp) {
-        powerUp.destroy();
-        this.activatePowerUp()
-
-    }
-
-
-    createPowerUp() {
-        const x = Phaser.Math.Between(0, LARGEUR_FENETRE);
-        const y = -10;
-
-        const powerUp = this.PowerUp.create(x, y, "powerUp");
-        powerUp.setVelocityY(VELOCITE_BOMB);
-
-    }
-
     activateSpeed() {
-        this.vaisseau.setVelocityX(-VELOCITE_LATERAL_VAISSEAU * 2);
-        this.vaisseau.setVelocityY(-VELOCITE_HORIZONTALE_VAISSEAU * 2);
+        VELOCITE_LATERAL_VAISSEAU *= 2;
+        VELOCITE_HORIZONTALE_VAISSEAU *= 2;
 
         this.hasPowerUp = true;
 
         this.time.delayedCall(10000, () => {
-            this.resetSpeed();
             this.hasPowerUp = false;
+            this.resetSpeed();
         });
     }
 
@@ -348,10 +352,11 @@ class Home extends Phaser.Scene {
 
 
 
+
     resetSpeed() {
         this.hasPowerUp = false;
-        this.vaisseau.setVelocityX(VELOCITE_LATERAL_VAISSEAU);
-        this.vaisseau.setVelocityY(VELOCITE_HORIZONTALE_VAISSEAU);
+        VELOCITE_LATERAL_VAISSEAU = 300;
+        VELOCITE_HORIZONTALE_VAISSEAU = 250;
     }
 
 
