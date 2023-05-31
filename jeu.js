@@ -420,7 +420,10 @@ class Home extends Phaser.Scene {
 
     AddHealth() {
         this.hasPowerUp = true;
-        NB_VIE += 2;
+        NB_VIE ++;
+        if(NB_VIE>3 ){
+            NB_VIE = 3
+        }
         this.time.delayedCall(10000, () => { this.hasPowerUp = false });
     }
 
